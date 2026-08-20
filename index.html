@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>个人简历 · Personal Resume</title>
+<style>
+  :root{
+    --ink:#0d0d18;
+    --ink-2:#15152a;
+    --panel:#1b1b33;
+    --panel-2:#22223f;
+    --text:#f4f4fb;
+    --muted:#a9a9c7;
+    --pink:#ff4d6d;
+    --cyan:#22d3ee;
+    --yellow:#ffd60a;
+    --violet:#9b5de5;
+    --grad:linear-gradient(120deg,var(--pink),var(--violet) 45%,var(--cyan));
+    --shadow:0 18px 50px rgba(0,0,0,.45);
+    --radius:22px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    background:var(--ink);
+    color:var(--text);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* ===== Floating background shapes ===== */
+  .bg-shapes{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45;animation:float 14s ease-in-out infinite}
+  .blob.a{width:380px;height:380px;background:var(--pink);top:-90px;left:-60px}
+  .blob.b{width:320px;height:320px;background:var(--cyan);bottom:-70px;right:-50px;animation-delay:-5s}
+  .blob.c{width:260px;height:260px;background:var(--violet);top:40%;left:60%;animation-delay:-9s}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(30px) scale(1.08)}}
+
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ===== Nav ===== */
+  nav{
+    position:sticky;top:0;z-index:20;
+    backdrop-filter:blur(12px);
+    background:rgba(13,13,24,.72);
+    border-bottom:1px solid rgba(255,255,255,.07);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{font-weight:800;letter-spacing:.5px;font-size:18px}
+  .brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav-links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--text)}
+  .btn-print{
+    border:1px solid rgba(255,255,255,.2);background:transparent;color:var(--text);
+    padding:8px 16px;border-radius:999px;font-size:13px;cursor:pointer;transition:.2s;
+  }
+  .btn-print:hover{background:var(--grad);border-color:transparent;color:#0d0d18;font-weight:700}
+
+  /* Search (hidden backdoor entry) */
+  .search-wrap{display:flex;align-items:center;gap:10px}
+  .search-toggle{
+    cursor:pointer;background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--text);
+    width:38px;height:38px;border-radius:50%;font-size:16px;display:grid;place-items:center;transition:.2s;
+  }
+  .search-toggle:hover{background:var(--grad);border-color:transparent;color:#0d0d18}
+  .search-box{
+    display:none;align-items:center;background:var(--panel);border:1px solid rgba(255,255,255,.15);
+    border-radius:999px;padding:6px 14px;
+  }
+  .search-box.show{display:flex}
+  .search-box input{background:transparent;border:none;outline:none;color:var(--text);font-size:14px;width:200px}
+  .search-box input::placeholder{color:var(--muted)}
+  .search-count{font-size:12px;color:var(--cyan);margin-left:8px;white-space:nowrap}
+
+  /* ===== Hero ===== */
+  header.hero{padding:90px 0 70px;position:relative}
+  .tag{
+    display:inline-block;font-size:13px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--cyan);border:1px solid rgba(34,211,238,.4);
+    padding:6px 14px;border-radius:999px;margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(46px,9vw,92px);line-height:.98;font-weight:900;letter-spacing:-2px;
+  }
+  .hero h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .role{
+    margin-top:18px;font-size:clamp(18px,3vw,26px);font-weight:600;color:var(--text);
+  }
+  .hero .role em{font-style:normal;color:var(--yellow)}
+  .hero .tagline{margin-top:18px;max-width:620px;color:var(--muted);font-size:17px}
+  .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .chip{
+    display:flex;align-items:center;gap:8px;background:var(--panel);
+    border:1px solid rgba(255,255,255,.08);padding:10px 16px;border-radius:14px;font-size:14px;
+  }
+  .chip b{color:var(--cyan);font-weight:700}
+
+  /* ===== Sections ===== */
+  section{padding:64px 0;position:relative}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:36px}
+  .sec-num{
+    font-size:14px;font-weight:800;color:var(--ink);background:var(--yellow);
+    width:34px;height:34px;border-radius:10px;display:grid;place-items:center;transform:rotate(-6deg);
+  }
+  .sec-head h2{font-size:clamp(28px,5vw,42px);font-weight:900;letter-spacing:-1px}
+  .sec-head .en{color:var(--muted);font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+  .sec-head .line{flex:1;height:2px;background:linear-gradient(90deg,var(--pink),transparent)}
+
+  .card{
+    background:var(--panel);border:1px solid rgba(255,255,255,.07);
+    border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--grad)}
+
+  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:28px}
+  .about p{color:var(--muted);font-size:16px}
+  .about p + p{margin-top:14px}
+  .facts{display:grid;gap:16px}
+  .fact{background:var(--panel-2);border-radius:16px;padding:16px 18px}
+  .fact .k{font-size:12px;color:var(--cyan);letter-spacing:1px;text-transform:uppercase}
+  .fact .v{font-size:18px;font-weight:700;margin-top:4px}
+
+  /* Skills */
+  .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .skill .top{display:flex;justify-content:space-between;font-size:15px;margin-bottom:8px}
+  .skill .top b{font-weight:700}
+  .skill .top span{color:var(--muted)}
+  .bar{height:10px;border-radius:999px;background:var(--panel-2);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:999px;background:var(--grad)}
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .tagx{background:var(--panel-2);border:1px solid rgba(255,255,255,.1);padding:8px 14px;border-radius:12px;font-size:14px}
+  .tagx.hot{border-color:var(--pink);color:var(--pink)}
+
+  /* Timeline */
+  .timeline{display:grid;gap:22px}
+  .item{background:var(--panel);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:26px 28px;position:relative}
+  .item .when{font-size:13px;color:var(--yellow);font-weight:700;letter-spacing:1px}
+  .item h3{font-size:22px;margin:6px 0 2px;font-weight:800}
+  .item .org{color:var(--cyan);font-weight:600;margin-bottom:12px}
+  .item ul{list-style:none;display:grid;gap:8px}
+  .item li{padding-left:20px;position:relative;color:var(--muted)}
+  .item li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;background:var(--grad)}
+
+  /* Projects */
+  .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+  .proj{background:var(--panel);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:26px;transition:.25s;position:relative;overflow:hidden}
+  .proj:hover{transform:translateY(-6px);border-color:var(--pink)}
+  .proj .emoji{font-size:30px}
+  .proj h3{font-size:20px;margin:12px 0 8px;font-weight:800}
+  .proj p{color:var(--muted);font-size:15px}
+  .proj .stack{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .proj .stack span{font-size:12px;background:var(--panel-2);padding:5px 10px;border-radius:8px;color:var(--cyan)}
+
+  /* Contact */
+  .contact{background:var(--grad);border-radius:var(--radius);padding:48px;text-align:center;color:#0d0d18}
+  .contact h2{font-size:clamp(28px,5vw,44px);font-weight:900}
+  .contact p{margin-top:10px;font-weight:600;opacity:.85}
+  .contact .row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:28px}
+  .contact .row a{background:rgba(13,13,24,.9);color:#fff;padding:12px 22px;border-radius:14px;font-weight:700;font-size:15px}
+
+  footer{padding:40px 0 60px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* ===== Edit mode ===== */
+  body.edit-mode [contenteditable="true"]{
+    outline:2px dashed var(--cyan);outline-offset:4px;border-radius:8px;
+    transition:outline .15s, background .15s;
+  }
+  body.edit-mode [contenteditable="true"]:hover{
+    outline-color:var(--pink);background:rgba(255,77,109,.07);
+  }
+  body.edit-mode .item,body.edit-mode .proj{cursor:text}
+  .edit-badge{
+    display:none;position:fixed;top:74px;right:18px;z-index:40;
+    background:var(--pink);color:#fff;font-weight:800;font-size:12px;letter-spacing:1px;
+    padding:6px 12px;border-radius:999px;box-shadow:0 6px 20px rgba(255,77,109,.5);
+  }
+  body.edit-mode .edit-badge{display:block}
+
+  .edit-toolbar{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:none;gap:10px;
+    background:rgba(20,20,40,.92);backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.12);padding:10px 14px;border-radius:999px;
+    z-index:50;box-shadow:0 10px 40px rgba(0,0,0,.5);
+  }
+  .edit-toolbar.show{display:flex;flex-wrap:wrap;justify-content:center}
+  .edit-toolbar button{
+    border:none;cursor:pointer;font-size:14px;font-weight:700;padding:10px 16px;border-radius:999px;transition:.2s;
+  }
+  .tb-add{background:var(--grad);color:#0d0d18}
+  .tb-save{background:var(--panel-2);color:var(--text)}
+  .tb-exit{background:transparent;border:1px solid rgba(255,255,255,.25)!important;color:var(--text)}
+  .tb-reset{background:transparent;border:1px solid rgba(255,77,109,.5)!important;color:var(--pink)}
+
+  .toast{
+    position:fixed;top:84px;left:50%;transform:translateX(-50%) translateY(-20px);
+    background:var(--grad);color:#0d0d18;font-weight:700;padding:12px 22px;border-radius:14px;
+    opacity:0;transition:.3s;z-index:60;pointer-events:none;max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:760px){
+    .about-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .contact{padding:32px 20px}
+    .search-box input{width:130px}
+  }
+  @media print{
+    .bg-shapes,.btn-print,.nav-links,.search-wrap,.edit-toolbar,.toast,.edit-badge{display:none}
+    body{background:#fff;color:#111}
+    .card,.item,.proj,.facts .fact{background:#fff;border:1px solid #ddd;box-shadow:none}
+    .card::before{background:#333}
+    .sec-head .en,.about p,.item li,.proj p{color:#444}
+    .chip,.tagx{background:#f3f3f3;border:1px solid #ddd}
+    nav{position:static;background:#fff;border-bottom:1px solid #ddd}
+    .brand span{color:#000;-webkit-text-fill-color:#000}
+  }
+</style>
+</head>
+<body>
+  <div class="bg-shapes">
+    <div class="blob a"></div>
+    <div class="blob b"></div>
+    <div class="blob c"></div>
+  </div>
+
+  <nav>
+    <div class="wrap">
+      <div class="brand">李<b>明轩</b> · <span>Resume</span></div>
+      <div class="nav-links">
+        <a href="#about">关于 / About</a>
+        <a href="#skills">技能 / Skills</a>
+        <a href="#exp">经历 / Experience</a>
+        <a href="#projects">项目 / Projects</a>
+        <a href="#contact">联系 / Contact</a>
+      </div>
+      <div class="search-wrap">
+        <button class="search-toggle" id="searchToggle" title="搜索经历 / Search">🔍</button>
+        <div class="search-box" id="searchBox">
+          <input id="searchInput" type="text" placeholder="搜索经历… / search" autocomplete="off" />
+          <span class="search-count" id="searchCount"></span>
+        </div>
+        <button class="btn-print" onclick="window.print()">打印 / Print</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap" id="content">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="tag">Personal Resume · 个人简历</div>
+      <h1>李<span class="grad">明轩</span></h1>
+      <div class="role">高级产品设计师 <em>· Senior Product Designer</em></div>
+      <p class="tagline">
+        用设计连接人与技术，专注于体验、品牌与增长的交汇点。<br/>
+        Bridging people and technology through design — at the intersection of experience, brand and growth.
+      </p>
+      <div class="chips">
+        <div class="chip"><b>📍</b> 上海 / Shanghai</div>
+        <div class="chip"><b>✉</b> mingxuan.li@example.com</div>
+        <div class="chip"><b>☎</b> +86 138-0000-0000</div>
+        <div class="chip"><b>🔗</b> behance.net/mingxuan</div>
+      </div>
+    </header>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <h2>关于我<span class="en-sub">About Me</span></h2>
+        <div class="line"></div>
+      </div>
+      <div class="about-grid">
+        <div class="card about">
+          <p>我是一名拥有 8 年经验的产品设计师，擅长把复杂的业务逻辑转化为简洁、愉悦的用户体验。曾主导多个从 0 到 1 的产品设计，并帮助团队建立设计规范与组件体系。</p>
+          <p>I am a product designer with 8 years of experience turning complex business logic into simple, delightful experiences. I have led several 0-to-1 product designs and built design systems that scale.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><div class="k">Experience 经验</div><div class="v">8 年 / Years</div></div>
+          <div class="fact"><div class="k">Projects 项目</div><div class="v">40+ 上线作品</div></div>
+          <div class="fact"><div class="k">Focus 专注</div><div class="v">UX · 品牌 · 增长</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <h2>专业技能<span class="en-sub">Skills</span></h2>
+        <div class="line"></div>
+      </div>
+      <div class="card">
+        <div class="skills">
+          <div class="skill"><div class="top"><b>用户体验设计 UX</b><span>95%</span></div><div class="bar"><i style="width:95%"></i></div></div>
+          <div class="skill"><div class="top"><b>交互原型 Prototyping</b><span>90%</span></div><div class="bar"><i style="width:90%"></i></div></div>
+          <div class="skill"><div class="top"><b>设计系统 Design System</b><span>88%</span></div><div class="bar"><i style="width:88%"></i></div></div>
+          <div class="skill"><div class="top"><b>品牌视觉 Branding</b><span>82%</span></div><div class="bar"><i style="width:82%"></i></div></div>
+          <div class="skill"><div class="top"><b>前端 Front-end</b><span>70%</span></div><div class="bar"><i style="width:70%"></i></div></div>
+          <div class="skill"><div class="top"><b>用户研究 Research</b><span>78%</span></div><div class="bar"><i style="width:78%"></i></div></div>
+        </div>
+        <div class="tags">
+          <span class="tagx hot">Figma</span>
+          <span class="tagx hot">Sketch</span>
+          <span class="tagx">Framer</span>
+          <span class="tagx">Principle</span>
+          <span class="tagx">HTML / CSS</span>
+          <span class="tagx">React</span>
+          <span class="tagx">Illustrator</span>
+          <span class="tagx">After Effects</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="exp">
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <h2>工作经历<span class="en-sub">Experience</span></h2>
+        <div class="line"></div>
+      </div>
+      <div class="timeline">
+        <div class="item">
+          <div class="when">2022 — 至今 / Present</div>
+          <h3>高级产品设计师</h3>
+          <div class="org">星河科技 · Galaxy Tech</div>
+          <ul>
+            <li>主导核心 SaaS 产品的体验重构，关键流程转化率提升 32%。<br/><span style="color:var(--muted)">Led UX redesign of core SaaS product; lifted conversion by 32%.</span></li>
+            <li>建立跨平台设计系统，覆盖 6 条产品线、200+ 组件。<br/><span style="color:var(--muted)">Built a cross-platform design system across 6 product lines.</span></li>
+          </ul>
+        </div>
+        <div class="item">
+          <div class="when">2019 — 2022</div>
+          <h3>产品设计师</h3>
+          <div class="org">云图互联 · CloudGraph</div>
+          <ul>
+            <li>负责移动端 App 从 0 到 1 的设计，上线一年获 500 万下载。<br/><span style="color:var(--muted)">Designed a 0-to-1 mobile app; 5M downloads in year one.</span></li>
+            <li>搭建用户研究体系，输出 30+ 可用性报告。<br/><span style="color:var(--muted)">Set up user research practice; 30+ usability reports.</span></li>
+          </ul>
+        </div>
+        <div class="item">
+          <div class="when">2017 — 2019</div>
+          <h3>UI 设计师</h3>
+          <div class="org">原点工作室 · Origin Studio</div>
+          <ul>
+            <li>为 20+ 品牌提供视觉与界面设计，多次获行业奖项。<br/><span style="color:var(--muted)">Delivered visual & UI for 20+ brands; multiple awards.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <h2>代表项目<span class="en-sub">Projects</span></h2>
+        <div class="line"></div>
+      </div>
+      <div class="projects">
+        <div class="proj">
+          <div class="emoji">🚀</div>
+          <h3>Nova 设计系统</h3>
+          <p>一套面向多端的企业级组件库与设计令牌体系。<br/><span style="color:var(--muted)">An enterprise-grade multi-platform design system & tokens.</span></p>
+          <div class="stack"><span>Figma</span><span>Token</span><span>React</span></div>
+        </div>
+        <div class="proj">
+          <div class="emoji">📱</div>
+          <h3>Pulse 健康 App</h3>
+          <p>从研究到上线的完整移动健康产品，获设计大奖。<br/><span style="color:var(--muted)">End-to-end mobile health product; award-winning.</span></p>
+          <div class="stack"><span>UX</span><span>Prototype</span><span>AE</span></div>
+        </div>
+        <div class="proj">
+          <div class="emoji">🎨</div>
+          <h3>Aurora 品牌升级</h3>
+          <p>为科技公司打造的全新视觉识别与动态品牌系统。<br/><span style="color:var(--muted)">Full rebrand & motion identity for a tech company.</span></p>
+          <div class="stack"><span>Branding</span><span>Motion</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="contact">
+        <h2>一起合作吧<br/><span style="font-size:.6em">Let's work together</span></h2>
+        <p>无论是全职机会、设计咨询还是创意碰撞，欢迎随时联系。</p>
+        <div class="row">
+          <a href="mailto:mingxuan.li@example.com">✉ 发邮件 Email</a>
+          <a href="#">💼 LinkedIn</a>
+          <a href="#">🎨 作品集 Portfolio</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 李明轩 Mingxuan Li · 本简历由 WorkBuddy 生成 · Designed with bold intent
+    </footer>
+  </div>
+
+  <div class="edit-badge">EDIT MODE · 编辑模式</div>
+
+  <div class="edit-toolbar" id="editToolbar">
+    <button class="tb-add" onclick="addExperience()">＋ 新建经历</button>
+    <button class="tb-save" onclick="saveNow();toast('已保存 ✓')">💾 保存</button>
+    <button class="tb-exit" onclick="exitEdit()">退出编辑</button>
+    <button class="tb-reset" onclick="resetAll()">↺ 重置</button>
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script>
+  const SECRET = "159357.xXx";          // 暗门口令：在搜索框输入即进入编辑模式
+  const STORE  = "cv_resume_v1";        // 本地存储键
+  const content = document.getElementById('content');
+  const searchBox = document.getElementById('searchBox');
+  const searchInput = document.getElementById('searchInput');
+  const searchCount = document.getElementById('searchCount');
+  const toolbar = document.getElementById('editToolbar');
+  let editMode = false;
+
+  // 载入已保存的修改
+  (function load(){
+    const saved = localStorage.getItem(STORE);
+    if(saved) content.innerHTML = saved;
+  })();
+
+  // 可被编辑的文字节点
+  function editableNodes(){
+    return content.querySelectorAll(
+      'h1,h2,h3,p,li,.role,.tagline,.chip,.fact .v,.fact .k,' +
+      '.skill .top b,.skill .top span,.when,.org,.emoji,.proj p,.contact h2,.contact p,footer'
+    );
+  }
+
+  // 搜索图标：展开/收起搜索框
+  document.getElementById('searchToggle').addEventListener('click', () => {
+    searchBox.classList.toggle('show');
+    if(searchBox.classList.contains('show')) searchInput.focus();
+  });
+
+  // 输入监听：普通搜索 或 触发暗门
+  searchInput.addEventListener('input', () => {
+    const v = searchInput.value.trim();
+    if(v === SECRET){ enterEdit(); searchInput.value=''; searchBox.classList.remove('show'); return; }
+    filterExp(v);
+  });
+
+  // 普通搜索：按文字过滤工作经历
+  function filterExp(q){
+    const items = content.querySelectorAll('#exp .item');
+    if(!q){ items.forEach(i=>i.style.display=''); searchCount.textContent=''; return; }
+    let n = 0;
+    items.forEach(i=>{
+      const hit = i.textContent.toLowerCase().includes(q.toLowerCase());
+      i.style.display = hit ? '' : 'none';
+      if(hit) n++;
+    });
+    searchCount.textContent = n + ' 条';
+  }
+  function resetFilter(){
+    content.querySelectorAll('#exp .item').forEach(i=>i.style.display='');
+    searchCount.textContent='';
+  }
+
+  // 进入编辑模式
+  function enterEdit(){
+    if(editMode) return;
+    editMode = true;
+    document.body.classList.add('edit-mode');
+    toolbar.classList.add('show');
+    editableNodes().forEach(el=>el.setAttribute('contenteditable','true'));
+    resetFilter();
+    toast('🔓 编辑模式已开启：点击任意文字即可修改，并可新建经历');
+  }
+
+  // 退出编辑模式
+  function exitEdit(){
+    if(!editMode) return;
+    editMode = false;
+    document.body.classList.remove('edit-mode');
+    toolbar.classList.remove('show');
+    editableNodes().forEach(el=>el.removeAttribute('contenteditable'));
+    saveNow();
+    toast('已退出编辑模式，修改已保存');
+  }
+
+  // 保存（自动去除 contenteditable 标记，保证存储干净）
+  function saveNow(){
+    const clone = content.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    localStorage.setItem(STORE, clone.innerHTML);
+  }
+
+  // 编辑时自动保存（防抖）
+  let saveTimer;
+  content.addEventListener('input', () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveNow, 600);
+  });
+
+  // 新建一段经历
+  function addExperience(){
+    const tl = content.querySelector('#exp .timeline');
+    if(!tl) return;
+    const d = document.createElement('div');
+    d.className = 'item';
+    d.innerHTML =
+      '<div class="when">2026 — 至今 / Present</div>' +
+      '<h3>新职位名称 · New Role</h3>' +
+      '<div class="org">公司名称 · Company</div>' +
+      '<ul><li>点击这里描述你的工作职责 / Click to describe your responsibility</li></ul>';
+    tl.appendChild(d);
+    if(editMode){
+      d.querySelectorAll('h3,.when,.org,li').forEach(el=>el.setAttribute('contenteditable','true'));
+    }
+    saveNow();
+    toast('已新增一段经历，可直接编辑');
+    d.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  // 重置为初始示例
+  function resetAll(){
+    if(confirm('确定清空所有修改，恢复到初始示例内容吗？此操作不可撤销。')){
+      localStorage.removeItem(STORE);
+      location.reload();
+    }
+  }
+
+  // 轻提示
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._h);
+    t._h = setTimeout(()=>t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>
