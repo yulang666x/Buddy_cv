@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>个人简历 · Personal Resume</title>
+<title>个人简历 · Resume</title>
 <style>
   :root{
     --ink:#0d0d18;
@@ -48,16 +48,22 @@
     background:rgba(13,13,24,.72);
     border-bottom:1px solid rgba(255,255,255,.07);
   }
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{font-weight:800;letter-spacing:.5px;font-size:18px}
-  .brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:10px;flex-wrap:wrap}
+  .brand{font-weight:800;letter-spacing:.5px;font-size:18px;white-space:nowrap}
+  .brand span b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+  .brand span.plain{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
   .nav-links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
   .nav-links a:hover{color:var(--text)}
   .btn-print{
     border:1px solid rgba(255,255,255,.2);background:transparent;color:var(--text);
-    padding:8px 16px;border-radius:999px;font-size:13px;cursor:pointer;transition:.2s;
+    padding:8px 16px;border-radius:999px;font-size:13px;cursor:pointer;transition:.2s;white-space:nowrap;
   }
   .btn-print:hover{background:var(--grad);border-color:transparent;color:#0d0d18;font-weight:700}
+
+  /* Language switch */
+  .lang-switch{display:flex;gap:4px;background:var(--panel);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:3px}
+  .lang-btn{border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+  .lang-btn.active{background:var(--grad);color:#0d0d18}
 
   /* Search (hidden backdoor entry) */
   .search-wrap{display:flex;align-items:center;gap:10px}
@@ -74,6 +80,14 @@
   .search-box input{background:transparent;border:none;outline:none;color:var(--text);font-size:14px;width:200px}
   .search-box input::placeholder{color:var(--muted)}
   .search-count{font-size:12px;color:var(--cyan);margin-left:8px;white-space:nowrap}
+
+  /* ===== Language blocks ===== */
+  .block-en{display:none}
+  body.lang-en .block-zh{display:none}
+  body.lang-en .block-en{display:block}
+  .zh-only{} .en-only{display:none}
+  body.lang-en .zh-only{display:none}
+  body.lang-en .en-only{display:inline}
 
   /* ===== Hero ===== */
   header.hero{padding:90px 0 70px;position:relative}
@@ -209,14 +223,14 @@
     .search-box input{width:130px}
   }
   @media print{
-    .bg-shapes,.btn-print,.nav-links,.search-wrap,.edit-toolbar,.toast,.edit-badge{display:none}
+    .bg-shapes,.btn-print,.nav-links,.search-wrap,.lang-switch,.edit-toolbar,.toast,.edit-badge{display:none}
     body{background:#fff;color:#111}
     .card,.item,.proj,.facts .fact{background:#fff;border:1px solid #ddd;box-shadow:none}
     .card::before{background:#333}
     .sec-head .en,.about p,.item li,.proj p{color:#444}
     .chip,.tagx{background:#f3f3f3;border:1px solid #ddd}
     nav{position:static;background:#fff;border-bottom:1px solid #ddd}
-    .brand span{color:#000;-webkit-text-fill-color:#000}
+    .brand span.plain{color:#000;-webkit-text-fill-color:#000}
   }
 </style>
 </head>
@@ -229,175 +243,316 @@
 
   <nav>
     <div class="wrap">
-      <div class="brand">李<b>明轩</b> · <span>Resume</span></div>
+      <div class="brand"><span class="zh-only">李<b>明轩</b></span><span class="en-only">Mingxuan <b>Li</b></span> · <span class="plain">Resume</span></div>
       <div class="nav-links">
-        <a href="#about">关于 / About</a>
-        <a href="#skills">技能 / Skills</a>
-        <a href="#exp">经历 / Experience</a>
-        <a href="#projects">项目 / Projects</a>
-        <a href="#contact">联系 / Contact</a>
+        <a href="javascript:void(0)" onclick="goSec('about')"><span class="zh-only">关于</span><span class="en-only">About</span></a>
+        <a href="javascript:void(0)" onclick="goSec('skills')"><span class="zh-only">技能</span><span class="en-only">Skills</span></a>
+        <a href="javascript:void(0)" onclick="goSec('exp')"><span class="zh-only">经历</span><span class="en-only">Experience</span></a>
+        <a href="javascript:void(0)" onclick="goSec('projects')"><span class="zh-only">项目</span><span class="en-only">Projects</span></a>
+        <a href="javascript:void(0)" onclick="goSec('contact')"><span class="zh-only">联系</span><span class="en-only">Contact</span></a>
+      </div>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
       </div>
       <div class="search-wrap">
         <button class="search-toggle" id="searchToggle" title="搜索经历 / Search">🔍</button>
         <div class="search-box" id="searchBox">
-          <input id="searchInput" type="text" placeholder="搜索经历… / search" autocomplete="off" />
+          <input id="searchInput" type="text" placeholder="搜索经历…" autocomplete="off" />
           <span class="search-count" id="searchCount"></span>
         </div>
-        <button class="btn-print" onclick="window.print()">打印 / Print</button>
+        <button class="btn-print" onclick="window.print()"><span class="zh-only">打印</span><span class="en-only">Print</span></button>
       </div>
     </div>
   </nav>
 
   <div class="wrap" id="content">
   <!--EDITABLE-START-->
-    <!-- HERO -->
-    <header class="hero">
-      <div class="tag">Personal Resume · 个人简历</div>
-      <h1>李<span class="grad">明轩</span></h1>
-      <div class="role">高级产品设计师 <em>· Senior Product Designer</em></div>
-      <p class="tagline">
-        用设计连接人与技术，专注于体验、品牌与增长的交汇点。<br/>
-        Bridging people and technology through design — at the intersection of experience, brand and growth.
-      </p>
-      <div class="chips">
-        <div class="chip"><b>📍</b> 上海 / Shanghai</div>
-        <div class="chip"><b>✉</b> mingxuan.li@example.com</div>
-        <div class="chip"><b>☎</b> +86 138-0000-0000</div>
-        <div class="chip"><b>🔗</b> behance.net/mingxuan</div>
-      </div>
-    </header>
+    <!-- ===== 中文版 ===== -->
+    <div class="block-zh">
+      <header class="hero">
+        <div class="tag">个人简历</div>
+        <h1>李<span class="grad">明轩</span></h1>
+        <div class="role">高级产品设计师</div>
+        <p class="tagline">用设计连接人与技术，专注于体验、品牌与增长的交汇点。</p>
+        <div class="chips">
+          <div class="chip"><b>📍</b> 上海</div>
+          <div class="chip"><b>✉</b> mingxuan.li@example.com</div>
+          <div class="chip"><b>☎</b> +86 138-0000-0000</div>
+          <div class="chip"><b>🔗</b> behance.net/mingxuan</div>
+        </div>
+      </header>
 
-    <!-- ABOUT -->
-    <section id="about">
-      <div class="sec-head">
-        <div class="sec-num">01</div>
-        <h2>关于我<span class="en-sub">About Me</span></h2>
-        <div class="line"></div>
-      </div>
-      <div class="about-grid">
-        <div class="card about">
-          <p>我是一名拥有 8 年经验的产品设计师，擅长把复杂的业务逻辑转化为简洁、愉悦的用户体验。曾主导多个从 0 到 1 的产品设计，并帮助团队建立设计规范与组件体系。</p>
-          <p>I am a product designer with 8 years of experience turning complex business logic into simple, delightful experiences. I have led several 0-to-1 product designs and built design systems that scale.</p>
+      <section data-sec="about">
+        <div class="sec-head">
+          <div class="sec-num">01</div>
+          <h2>关于我</h2>
+          <div class="line"></div>
         </div>
-        <div class="facts">
-          <div class="fact"><div class="k">Experience 经验</div><div class="v">8 年 / Years</div></div>
-          <div class="fact"><div class="k">Projects 项目</div><div class="v">40+ 上线作品</div></div>
-          <div class="fact"><div class="k">Focus 专注</div><div class="v">UX · 品牌 · 增长</div></div>
+        <div class="about-grid">
+          <div class="card about">
+            <p>我是一名拥有 8 年经验的产品设计师，擅长把复杂的业务逻辑转化为简洁、愉悦的用户体验。曾主导多个从 0 到 1 的产品设计，并帮助团队建立设计规范与组件体系。</p>
+            <p>我关注那些让产品更有"人味"的细节，并与工程、产品紧密协作，把设计真正落地。</p>
+          </div>
+          <div class="facts">
+            <div class="fact"><div class="k">经验</div><div class="v">8 年</div></div>
+            <div class="fact"><div class="k">项目</div><div class="v">40+ 上线作品</div></div>
+            <div class="fact"><div class="k">专注</div><div class="v">UX · 品牌 · 增长</div></div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- SKILLS -->
-    <section id="skills">
-      <div class="sec-head">
-        <div class="sec-num">02</div>
-        <h2>专业技能<span class="en-sub">Skills</span></h2>
-        <div class="line"></div>
-      </div>
-      <div class="card">
-        <div class="skills">
-          <div class="skill"><div class="top"><b>用户体验设计 UX</b><span>95%</span></div><div class="bar"><i style="width:95%"></i></div></div>
-          <div class="skill"><div class="top"><b>交互原型 Prototyping</b><span>90%</span></div><div class="bar"><i style="width:90%"></i></div></div>
-          <div class="skill"><div class="top"><b>设计系统 Design System</b><span>88%</span></div><div class="bar"><i style="width:88%"></i></div></div>
-          <div class="skill"><div class="top"><b>品牌视觉 Branding</b><span>82%</span></div><div class="bar"><i style="width:82%"></i></div></div>
-          <div class="skill"><div class="top"><b>前端 Front-end</b><span>70%</span></div><div class="bar"><i style="width:70%"></i></div></div>
-          <div class="skill"><div class="top"><b>用户研究 Research</b><span>78%</span></div><div class="bar"><i style="width:78%"></i></div></div>
+      <section data-sec="skills">
+        <div class="sec-head">
+          <div class="sec-num">02</div>
+          <h2>专业技能</h2>
+          <div class="line"></div>
         </div>
-        <div class="tags">
-          <span class="tagx hot">Figma</span>
-          <span class="tagx hot">Sketch</span>
-          <span class="tagx">Framer</span>
-          <span class="tagx">Principle</span>
-          <span class="tagx">HTML / CSS</span>
-          <span class="tagx">React</span>
-          <span class="tagx">Illustrator</span>
-          <span class="tagx">After Effects</span>
+        <div class="card">
+          <div class="skills">
+            <div class="skill"><div class="top"><b>用户体验设计</b><span>95%</span></div><div class="bar"><i style="width:95%"></i></div></div>
+            <div class="skill"><div class="top"><b>交互原型</b><span>90%</span></div><div class="bar"><i style="width:90%"></i></div></div>
+            <div class="skill"><div class="top"><b>设计系统</b><span>88%</span></div><div class="bar"><i style="width:88%"></i></div></div>
+            <div class="skill"><div class="top"><b>品牌视觉</b><span>82%</span></div><div class="bar"><i style="width:82%"></i></div></div>
+            <div class="skill"><div class="top"><b>前端开发</b><span>70%</span></div><div class="bar"><i style="width:70%"></i></div></div>
+            <div class="skill"><div class="top"><b>用户研究</b><span>78%</span></div><div class="bar"><i style="width:78%"></i></div></div>
+          </div>
+          <div class="tags">
+            <span class="tagx hot">Figma</span>
+            <span class="tagx hot">Sketch</span>
+            <span class="tagx">Framer</span>
+            <span class="tagx">Principle</span>
+            <span class="tagx">HTML / CSS</span>
+            <span class="tagx">React</span>
+            <span class="tagx">Illustrator</span>
+            <span class="tagx">After Effects</span>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- EXPERIENCE -->
-    <section id="exp">
-      <div class="sec-head">
-        <div class="sec-num">03</div>
-        <h2>工作经历<span class="en-sub">Experience</span></h2>
-        <div class="line"></div>
-      </div>
-      <div class="timeline">
-        <div class="item">
-          <div class="when">2022 — 至今 / Present</div>
-          <h3>高级产品设计师</h3>
-          <div class="org">星河科技 · Galaxy Tech</div>
-          <ul>
-            <li>主导核心 SaaS 产品的体验重构，关键流程转化率提升 32%。<br/><span style="color:var(--muted)">Led UX redesign of core SaaS product; lifted conversion by 32%.</span></li>
-            <li>建立跨平台设计系统，覆盖 6 条产品线、200+ 组件。<br/><span style="color:var(--muted)">Built a cross-platform design system across 6 product lines.</span></li>
-          </ul>
+      <section data-sec="exp">
+        <div class="sec-head">
+          <div class="sec-num">03</div>
+          <h2>工作经历</h2>
+          <div class="line"></div>
         </div>
-        <div class="item">
-          <div class="when">2019 — 2022</div>
-          <h3>产品设计师</h3>
-          <div class="org">云图互联 · CloudGraph</div>
-          <ul>
-            <li>负责移动端 App 从 0 到 1 的设计，上线一年获 500 万下载。<br/><span style="color:var(--muted)">Designed a 0-to-1 mobile app; 5M downloads in year one.</span></li>
-            <li>搭建用户研究体系，输出 30+ 可用性报告。<br/><span style="color:var(--muted)">Set up user research practice; 30+ usability reports.</span></li>
-          </ul>
+        <div class="timeline">
+          <div class="item">
+            <div class="when">2022 — 至今</div>
+            <h3>高级产品设计师</h3>
+            <div class="org">星河科技</div>
+            <ul>
+              <li>主导核心 SaaS 产品的体验重构，关键流程转化率提升 32%。</li>
+              <li>建立跨平台设计系统，覆盖 6 条产品线、200+ 组件。</li>
+            </ul>
+          </div>
+          <div class="item">
+            <div class="when">2019 — 2022</div>
+            <h3>产品设计师</h3>
+            <div class="org">云图互联</div>
+            <ul>
+              <li>负责移动端 App 从 0 到 1 的设计，上线一年获 500 万下载。</li>
+              <li>搭建用户研究体系，输出 30+ 可用性报告。</li>
+            </ul>
+          </div>
+          <div class="item">
+            <div class="when">2017 — 2019</div>
+            <h3>UI 设计师</h3>
+            <div class="org">原点工作室</div>
+            <ul>
+              <li>为 20+ 品牌提供视觉与界面设计，多次获行业奖项。</li>
+            </ul>
+          </div>
         </div>
-        <div class="item">
-          <div class="when">2017 — 2019</div>
-          <h3>UI 设计师</h3>
-          <div class="org">原点工作室 · Origin Studio</div>
-          <ul>
-            <li>为 20+ 品牌提供视觉与界面设计，多次获行业奖项。<br/><span style="color:var(--muted)">Delivered visual & UI for 20+ brands; multiple awards.</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- PROJECTS -->
-    <section id="projects">
-      <div class="sec-head">
-        <div class="sec-num">04</div>
-        <h2>代表项目<span class="en-sub">Projects</span></h2>
-        <div class="line"></div>
-      </div>
-      <div class="projects">
-        <div class="proj">
-          <div class="emoji">🚀</div>
-          <h3>Nova 设计系统</h3>
-          <p>一套面向多端的企业级组件库与设计令牌体系。<br/><span style="color:var(--muted)">An enterprise-grade multi-platform design system & tokens.</span></p>
-          <div class="stack"><span>Figma</span><span>Token</span><span>React</span></div>
+      <section data-sec="projects">
+        <div class="sec-head">
+          <div class="sec-num">04</div>
+          <h2>代表项目</h2>
+          <div class="line"></div>
         </div>
-        <div class="proj">
-          <div class="emoji">📱</div>
-          <h3>Pulse 健康 App</h3>
-          <p>从研究到上线的完整移动健康产品，获设计大奖。<br/><span style="color:var(--muted)">End-to-end mobile health product; award-winning.</span></p>
-          <div class="stack"><span>UX</span><span>Prototype</span><span>AE</span></div>
+        <div class="projects">
+          <div class="proj">
+            <div class="emoji">🚀</div>
+            <h3>Nova 设计系统</h3>
+            <p>一套面向多端的企业级组件库与设计令牌体系。</p>
+            <div class="stack"><span>Figma</span><span>Token</span><span>React</span></div>
+          </div>
+          <div class="proj">
+            <div class="emoji">📱</div>
+            <h3>Pulse 健康 App</h3>
+            <p>从研究到上线的完整移动健康产品，获设计大奖。</p>
+            <div class="stack"><span>UX</span><span>Prototype</span><span>AE</span></div>
+          </div>
+          <div class="proj">
+            <div class="emoji">🎨</div>
+            <h3>Aurora 品牌升级</h3>
+            <p>为科技公司打造的全新视觉识别与动态品牌系统。</p>
+            <div class="stack"><span>Branding</span><span>Motion</span></div>
+          </div>
         </div>
-        <div class="proj">
-          <div class="emoji">🎨</div>
-          <h3>Aurora 品牌升级</h3>
-          <p>为科技公司打造的全新视觉识别与动态品牌系统。<br/><span style="color:var(--muted)">Full rebrand & motion identity for a tech company.</span></p>
-          <div class="stack"><span>Branding</span><span>Motion</span></div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- CONTACT -->
-    <section id="contact">
-      <div class="contact">
-        <h2>一起合作吧<br/><span style="font-size:.6em">Let's work together</span></h2>
-        <p>无论是全职机会、设计咨询还是创意碰撞，欢迎随时联系。</p>
-        <div class="row">
-          <a href="mailto:mingxuan.li@example.com">✉ 发邮件 Email</a>
-          <a href="#">💼 LinkedIn</a>
-          <a href="#">🎨 作品集 Portfolio</a>
+      <section data-sec="contact">
+        <div class="contact">
+          <h2>一起合作吧</h2>
+          <p>无论是全职机会、设计咨询还是创意碰撞，欢迎随时联系。</p>
+          <div class="row">
+            <a href="mailto:mingxuan.li@example.com">✉ 发邮件</a>
+            <a href="#">💼 LinkedIn</a>
+            <a href="#">🎨 作品集</a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <footer>
-      © 2026 李明轩 Mingxuan Li · 本简历由 WorkBuddy 生成 · Designed with bold intent
-    </footer>
+      <footer>
+        © 2026 李明轩 · 本简历由 WorkBuddy 生成 · Designed with bold intent
+      </footer>
+    </div>
+
+    <!-- ===== English version ===== -->
+    <div class="block-en">
+      <header class="hero">
+        <div class="tag">Personal Resume</div>
+        <h1>Mingxuan <span class="grad">Li</span></h1>
+        <div class="role">Senior Product Designer</div>
+        <p class="tagline">Bridging people and technology through design — at the intersection of experience, brand and growth.</p>
+        <div class="chips">
+          <div class="chip"><b>📍</b> Shanghai</div>
+          <div class="chip"><b>✉</b> mingxuan.li@example.com</div>
+          <div class="chip"><b>☎</b> +86 138-0000-0000</div>
+          <div class="chip"><b>🔗</b> behance.net/mingxuan</div>
+        </div>
+      </header>
+
+      <section data-sec="about">
+        <div class="sec-head">
+          <div class="sec-num">01</div>
+          <h2>About Me</h2>
+          <div class="line"></div>
+        </div>
+        <div class="about-grid">
+          <div class="card about">
+            <p>I am a product designer with 8 years of experience turning complex business logic into simple, delightful experiences. I have led several 0-to-1 product designs and built design systems that scale.</p>
+            <p>I care about the details that make products feel human, and I partner closely with engineering and product to ship.</p>
+          </div>
+          <div class="facts">
+            <div class="fact"><div class="k">Experience</div><div class="v">8 Years</div></div>
+            <div class="fact"><div class="k">Projects</div><div class="v">40+ Launched</div></div>
+            <div class="fact"><div class="k">Focus</div><div class="v">UX · Brand · Growth</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section data-sec="skills">
+        <div class="sec-head">
+          <div class="sec-num">02</div>
+          <h2>Skills</h2>
+          <div class="line"></div>
+        </div>
+        <div class="card">
+          <div class="skills">
+            <div class="skill"><div class="top"><b>UX Design</b><span>95%</span></div><div class="bar"><i style="width:95%"></i></div></div>
+            <div class="skill"><div class="top"><b>Prototyping</b><span>90%</span></div><div class="bar"><i style="width:90%"></i></div></div>
+            <div class="skill"><div class="top"><b>Design System</b><span>88%</span></div><div class="bar"><i style="width:88%"></i></div></div>
+            <div class="skill"><div class="top"><b>Branding</b><span>82%</span></div><div class="bar"><i style="width:82%"></i></div></div>
+            <div class="skill"><div class="top"><b>Front-end</b><span>70%</span></div><div class="bar"><i style="width:70%"></i></div></div>
+            <div class="skill"><div class="top"><b>User Research</b><span>78%</span></div><div class="bar"><i style="width:78%"></i></div></div>
+          </div>
+          <div class="tags">
+            <span class="tagx hot">Figma</span>
+            <span class="tagx hot">Sketch</span>
+            <span class="tagx">Framer</span>
+            <span class="tagx">Principle</span>
+            <span class="tagx">HTML / CSS</span>
+            <span class="tagx">React</span>
+            <span class="tagx">Illustrator</span>
+            <span class="tagx">After Effects</span>
+          </div>
+        </div>
+      </section>
+
+      <section data-sec="exp">
+        <div class="sec-head">
+          <div class="sec-num">03</div>
+          <h2>Experience</h2>
+          <div class="line"></div>
+        </div>
+        <div class="timeline">
+          <div class="item">
+            <div class="when">2022 — Present</div>
+            <h3>Senior Product Designer</h3>
+            <div class="org">Galaxy Tech</div>
+            <ul>
+              <li>Led UX redesign of the core SaaS product; lifted conversion by 32%.</li>
+              <li>Built a cross-platform design system across 6 product lines, 200+ components.</li>
+            </ul>
+          </div>
+          <div class="item">
+            <div class="when">2019 — 2022</div>
+            <h3>Product Designer</h3>
+            <div class="org">CloudGraph</div>
+            <ul>
+              <li>Designed a 0-to-1 mobile app; 5M downloads within the first year.</li>
+              <li>Set up the user research practice; delivered 30+ usability reports.</li>
+            </ul>
+          </div>
+          <div class="item">
+            <div class="when">2017 — 2019</div>
+            <h3>UI Designer</h3>
+            <div class="org">Origin Studio</div>
+            <ul>
+              <li>Delivered visual & UI design for 20+ brands; multiple industry awards.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section data-sec="projects">
+        <div class="sec-head">
+          <div class="sec-num">04</div>
+          <h2>Projects</h2>
+          <div class="line"></div>
+        </div>
+        <div class="projects">
+          <div class="proj">
+            <div class="emoji">🚀</div>
+            <h3>Nova Design System</h3>
+            <p>An enterprise-grade multi-platform design system and token architecture.</p>
+            <div class="stack"><span>Figma</span><span>Token</span><span>React</span></div>
+          </div>
+          <div class="proj">
+            <div class="emoji">📱</div>
+            <h3>Pulse Health App</h3>
+            <p>An end-to-end mobile health product, from research to launch — award-winning.</p>
+            <div class="stack"><span>UX</span><span>Prototype</span><span>AE</span></div>
+          </div>
+          <div class="proj">
+            <div class="emoji">🎨</div>
+            <h3>Aurora Rebrand</h3>
+            <p>A full rebrand and motion identity system for a tech company.</p>
+            <div class="stack"><span>Branding</span><span>Motion</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section data-sec="contact">
+        <div class="contact">
+          <h2>Let's Work Together</h2>
+          <p>Whether it's a full-time role, design consulting, or a creative spark — feel free to reach out.</p>
+          <div class="row">
+            <a href="mailto:mingxuan.li@example.com">✉ Email</a>
+            <a href="#">💼 LinkedIn</a>
+            <a href="#">🎨 Portfolio</a>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        © 2026 Mingxuan Li · Built with WorkBuddy · Designed with bold intent
+      </footer>
+    </div>
   <!--EDITABLE-END-->
   </div>
 
@@ -414,7 +569,7 @@
 
 <script>
   const SECRET = "159357.xXx";          // 暗门口令：在搜索框输入即进入编辑模式
-  const STORE  = "cv_resume_v1";        // 本地存储键
+  const STORE  = "cv_resume_v2";        // 本地存储键（v2：支持中/英双语双块）
   const content = document.getElementById('content');
   const searchBox = document.getElementById('searchBox');
   const searchInput = document.getElementById('searchInput');
@@ -422,18 +577,48 @@
   const toolbar = document.getElementById('editToolbar');
   let editMode = false;
 
+  // 当前语言块
+  function currentBlock(){
+    return document.body.classList.contains('lang-en')
+      ? content.querySelector('.block-en')
+      : content.querySelector('.block-zh');
+  }
+
   // 载入已保存的修改
   (function load(){
     const saved = localStorage.getItem(STORE);
     if(saved) content.innerHTML = saved;
   })();
 
-  // 可被编辑的文字节点
+  // 语言切换（默认中文；英文为独立可选项）
+  function setLang(l){
+    document.body.classList.toggle('lang-en', l==='en');
+    localStorage.setItem('cv_lang', l);
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
+    searchInput.placeholder = (l==='en') ? 'Search experience…' : '搜索经历…';
+    if(editMode) applyEditableState();
+  }
+  (function initLang(){
+    const l = localStorage.getItem('cv_lang') || 'zh';
+    setLang(l);
+  })();
+
+  // 可被编辑的文字节点（仅当前语言块）
   function editableNodes(){
-    return content.querySelectorAll(
+    return currentBlock().querySelectorAll(
       'h1,h2,h3,p,li,.role,.tagline,.chip,.fact .v,.fact .k,' +
       '.skill .top b,.skill .top span,.when,.org,.emoji,.proj p,.contact h2,.contact p,footer'
     );
+  }
+  function applyEditableState(){
+    content.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    if(editMode) editableNodes().forEach(el=>el.setAttribute('contenteditable','true'));
+  }
+
+  // 导航锚点滚动（在当前语言块内）
+  function goSec(sec){
+    const el = currentBlock().querySelector('[data-sec="'+sec+'"]');
+    if(el) el.scrollIntoView({behavior:'smooth'});
   }
 
   // 搜索图标：展开/收起搜索框
@@ -449,9 +634,10 @@
     filterExp(v);
   });
 
-  // 普通搜索：按文字过滤工作经历
+  // 普通搜索：按文字过滤当前语言块的工作经历
   function filterExp(q){
-    const items = content.querySelectorAll('#exp .item');
+    const items = currentBlock().querySelectorAll('[data-sec="exp"] .item');
+    const en = document.body.classList.contains('lang-en');
     if(!q){ items.forEach(i=>i.style.display=''); searchCount.textContent=''; return; }
     let n = 0;
     items.forEach(i=>{
@@ -459,10 +645,10 @@
       i.style.display = hit ? '' : 'none';
       if(hit) n++;
     });
-    searchCount.textContent = n + ' 条';
+    searchCount.textContent = en ? (n + ' found') : (n + ' 条');
   }
   function resetFilter(){
-    content.querySelectorAll('#exp .item').forEach(i=>i.style.display='');
+    currentBlock().querySelectorAll('[data-sec="exp"] .item').forEach(i=>i.style.display='');
     searchCount.textContent='';
   }
 
@@ -472,7 +658,7 @@
     editMode = true;
     document.body.classList.add('edit-mode');
     toolbar.classList.add('show');
-    editableNodes().forEach(el=>el.setAttribute('contenteditable','true'));
+    applyEditableState();
     resetFilter();
     toast('🔓 编辑模式已开启：点击任意文字即可修改，并可新建经历');
   }
@@ -483,7 +669,7 @@
     editMode = false;
     document.body.classList.remove('edit-mode');
     toolbar.classList.remove('show');
-    editableNodes().forEach(el=>el.removeAttribute('contenteditable'));
+    applyEditableState();
     saveNow();
     toast('已退出编辑模式，修改已保存');
   }
@@ -502,23 +688,29 @@
     saveTimer = setTimeout(saveNow, 600);
   });
 
-  // 新建一段经历
+  // 新建一段经历（按当前语言生成）
   function addExperience(){
-    const tl = content.querySelector('#exp .timeline');
+    const block = currentBlock();
+    const tl = block.querySelector('[data-sec="exp"] .timeline');
     if(!tl) return;
+    const en = document.body.classList.contains('lang-en');
     const d = document.createElement('div');
     d.className = 'item';
-    d.innerHTML =
-      '<div class="when">2026 — 至今 / Present</div>' +
-      '<h3>新职位名称 · New Role</h3>' +
-      '<div class="org">公司名称 · Company</div>' +
-      '<ul><li>点击这里描述你的工作职责 / Click to describe your responsibility</li></ul>';
+    d.innerHTML = en
+      ? '<div class="when">2026 — Present</div>' +
+        '<h3>New Role Title</h3>' +
+        '<div class="org">Company Name</div>' +
+        '<ul><li>Click to describe your responsibility</li></ul>'
+      : '<div class="when">2026 — 至今</div>' +
+        '<h3>新职位名称</h3>' +
+        '<div class="org">公司名称</div>' +
+        '<ul><li>点击此处描述你的工作职责</li></ul>';
     tl.appendChild(d);
     if(editMode){
       d.querySelectorAll('h3,.when,.org,li').forEach(el=>el.setAttribute('contenteditable','true'));
     }
     saveNow();
-    toast('已新增一段经历，可直接编辑');
+    toast(en ? 'Added an experience entry — editable' : '已新增一段经历，可直接编辑');
     d.scrollIntoView({behavior:'smooth', block:'center'});
   }
 
