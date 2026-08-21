@@ -617,10 +617,20 @@
     }
   }
 
+  // 保险：确保 Hero 两个 h1 的 data-sync 属性存在（防止 localStorage 脏数据丢了属性后，
+  // 「☁ 同步云端」把结构冲掉，导致姓名联动永久失效的循环）
+  function ensureSyncAttrs(){
+    const zh = content.querySelector('.block-zh .hero h1');
+    if(zh) zh.setAttribute('data-sync','name-zh');
+    const en = content.querySelector('.block-en .hero h1');
+    if(en) en.setAttribute('data-sync','name-en');
+  }
+
   // 载入已保存的修改
   (function load(){
     const saved = localStorage.getItem(STORE);
     if(saved) content.innerHTML = saved;
+    ensureSyncAttrs(); // 先补回结构属性，再同步页外姓名
     // 用当前内容同步导航栏 / 页脚等页外姓名（必须在 content 赋值之后）
     document.querySelectorAll('[data-sync],[data-sync-text]').forEach(doSync);
   })();
@@ -711,6 +721,7 @@
 
   // 保存（自动去除 contenteditable 标记，保证存储干净）
   function saveNow(){
+    ensureSyncAttrs(); // 保存前补回结构属性，避免脏数据覆盖
     const clone = content.cloneNode(true);
     clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
     localStorage.setItem(STORE, clone.innerHTML);
@@ -774,6 +785,7 @@
     const old = btn.textContent;
     btn.textContent = '同步中…'; btn.disabled = true;
     try{
+      ensureSyncAttrs(); // 同步前补回结构属性，避免脏数据覆盖
       const clone = content.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
       const html = clone.innerHTML;
