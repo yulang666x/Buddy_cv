@@ -621,8 +621,8 @@
   (function load(){
     const saved = localStorage.getItem(STORE);
     if(saved) content.innerHTML = saved;
-    // 用当前内容同步导航栏 / 页脚等页外姓名
-    content.querySelectorAll('[data-sync],[data-sync-text]').forEach(doSync);
+    // 用当前内容同步导航栏 / 页脚等页外姓名（必须在 content 赋值之后）
+    document.querySelectorAll('[data-sync],[data-sync-text]').forEach(doSync);
   })();
 
   // 语言切换（默认中文；英文为独立可选项）
@@ -719,7 +719,8 @@
   // 编辑时自动保存（防抖）+ 同名联动
   let saveTimer;
   content.addEventListener('input', (e) => {
-    if(e.target && (e.target.dataset.sync || e.target.dataset.syncText)) doSync(e.target);
+    const src = e.target && e.target.closest('[data-sync],[data-sync-text]');
+    if(src) doSync(src);
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveNow, 600);
   });
