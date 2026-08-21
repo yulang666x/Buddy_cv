@@ -50,7 +50,7 @@
   }
   nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:10px;flex-wrap:wrap}
   .brand{font-weight:800;letter-spacing:.5px;font-size:18px;white-space:nowrap}
-  .brand span b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+  .brand .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
   .brand span.plain{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
   .nav-links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
   .nav-links a:hover{color:var(--text)}
@@ -157,6 +157,16 @@
   .item ul{list-style:none;display:grid;gap:8px}
   .item li{padding-left:20px;position:relative;color:var(--muted)}
   .item li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;background:var(--grad)}
+  .item .thumb-wrap{margin-top:16px;border-radius:14px;overflow:hidden;position:relative;background:var(--panel-2)}
+  .item .thumb{width:100%;height:auto;display:block}
+  body.edit-mode .item .thumb-wrap{cursor:pointer}
+  body.edit-mode .item .thumb-wrap::after{
+    content:"🖼 点击更换图片";position:absolute;left:0;right:0;bottom:0;
+    background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;font-size:12px;
+    padding:8px 12px;text-align:center;opacity:0;transition:.2s;
+  }
+  body.edit-mode .item .thumb-wrap:hover::after{opacity:1}
+  .img-input{display:none}
 
   /* Projects */
   .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
@@ -243,7 +253,7 @@
 
   <nav>
     <div class="wrap">
-      <div class="brand"><span class="zh-only">李<b>明轩</b></span><span class="en-only">Mingxuan <b>Li</b></span> · <span class="plain">Resume</span></div>
+      <div class="brand"><span class="zh-only" data-sync="name-zh">李<span class="grad">明轩</span></span><span class="en-only" data-sync="name-en">Mingxuan <span class="grad">Li</span></span> · <span class="plain">Resume</span></div>
       <div class="nav-links">
         <a href="javascript:void(0)" onclick="goSec('about')"><span class="zh-only">关于</span><span class="en-only">About</span></a>
         <a href="javascript:void(0)" onclick="goSec('skills')"><span class="zh-only">技能</span><span class="en-only">Skills</span></a>
@@ -272,7 +282,7 @@
     <div class="block-zh">
       <header class="hero">
         <div class="tag">个人简历</div>
-        <h1>李<span class="grad">明轩</span></h1>
+        <h1 data-sync="name-zh">李<span class="grad">明轩</span></h1>
         <div class="role">高级产品设计师</div>
         <p class="tagline">用设计连接人与技术，专注于体验、品牌与增长的交汇点。</p>
         <div class="chips">
@@ -345,6 +355,7 @@
               <li>主导核心 SaaS 产品的体验重构，关键流程转化率提升 32%。</li>
               <li>建立跨平台设计系统，覆盖 6 条产品线、200+ 组件。</li>
             </ul>
+            <div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>
           </div>
           <div class="item">
             <div class="when">2019 — 2022</div>
@@ -354,6 +365,7 @@
               <li>负责移动端 App 从 0 到 1 的设计，上线一年获 500 万下载。</li>
               <li>搭建用户研究体系，输出 30+ 可用性报告。</li>
             </ul>
+            <div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>
           </div>
           <div class="item">
             <div class="when">2017 — 2019</div>
@@ -362,6 +374,7 @@
             <ul>
               <li>为 20+ 品牌提供视觉与界面设计，多次获行业奖项。</li>
             </ul>
+            <div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>
           </div>
         </div>
       </section>
@@ -407,7 +420,7 @@
       </section>
 
       <footer>
-        © 2026 李明轩 · 本简历由 WorkBuddy 生成 · Designed with bold intent
+        © 2026 <span data-sync-text="name-zh">李明轩</span> · 本简历由 WorkBuddy 生成 · Designed with bold intent
       </footer>
     </div>
 
@@ -415,7 +428,7 @@
     <div class="block-en">
       <header class="hero">
         <div class="tag">Personal Resume</div>
-        <h1>Mingxuan <span class="grad">Li</span></h1>
+        <h1 data-sync="name-en">Mingxuan <span class="grad">Li</span></h1>
         <div class="role">Senior Product Designer</div>
         <p class="tagline">Bridging people and technology through design — at the intersection of experience, brand and growth.</p>
         <div class="chips">
@@ -488,6 +501,7 @@
               <li>Led UX redesign of the core SaaS product; lifted conversion by 32%.</li>
               <li>Built a cross-platform design system across 6 product lines, 200+ components.</li>
             </ul>
+            <div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>
           </div>
           <div class="item">
             <div class="when">2019 — 2022</div>
@@ -497,6 +511,7 @@
               <li>Designed a 0-to-1 mobile app; 5M downloads within the first year.</li>
               <li>Set up the user research practice; delivered 30+ usability reports.</li>
             </ul>
+            <div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>
           </div>
           <div class="item">
             <div class="when">2017 — 2019</div>
@@ -505,6 +520,7 @@
             <ul>
               <li>Delivered visual & UI design for 20+ brands; multiple industry awards.</li>
             </ul>
+            <div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>
           </div>
         </div>
       </section>
@@ -550,7 +566,7 @@
       </section>
 
       <footer>
-        © 2026 Mingxuan Li · Built with WorkBuddy · Designed with bold intent
+        © 2026 <span data-sync-text="name-en">Mingxuan Li</span> · Built with WorkBuddy · Designed with bold intent
       </footer>
     </div>
   <!--EDITABLE-END-->
@@ -566,6 +582,7 @@
     <button class="tb-reset" onclick="resetAll()">↺ 重置</button>
   </div>
   <div class="toast" id="toast"></div>
+  <input type="file" id="imgInput" class="img-input" accept="image/*" />
 
 <script>
   const SECRET = "159357.xXx";          // 暗门口令：在搜索框输入即进入编辑模式
@@ -584,10 +601,28 @@
       : content.querySelector('.block-zh');
   }
 
+  // 同名联动：一处改名，所有 data-sync 命中的位置一起变
+  function doSync(src){
+    const key = src.dataset.sync;
+    const tkey = src.dataset.syncText;
+    if(key){
+      document.querySelectorAll('[data-sync="'+key+'"]').forEach(t=>{
+        if(t!==src) t.innerHTML = src.innerHTML;
+      });
+    }
+    if(tkey){
+      document.querySelectorAll('[data-sync-text="'+tkey+'"]').forEach(t=>{
+        if(t!==src) t.textContent = src.textContent;
+      });
+    }
+  }
+
   // 载入已保存的修改
   (function load(){
     const saved = localStorage.getItem(STORE);
     if(saved) content.innerHTML = saved;
+    // 用当前内容同步导航栏 / 页脚等页外姓名
+    content.querySelectorAll('[data-sync],[data-sync-text]').forEach(doSync);
   })();
 
   // 语言切换（默认中文；英文为独立可选项）
@@ -681,11 +716,27 @@
     localStorage.setItem(STORE, clone.innerHTML);
   }
 
-  // 编辑时自动保存（防抖）
+  // 编辑时自动保存（防抖）+ 同名联动
   let saveTimer;
-  content.addEventListener('input', () => {
+  content.addEventListener('input', (e) => {
+    if(e.target && (e.target.dataset.sync || e.target.dataset.syncText)) doSync(e.target);
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveNow, 600);
+  });
+  // 编辑模式下点击经历配图 → 选择本地图片替换（转为 base64 内联，可被云同步带走）
+  let pendingImg = null;
+  const imgInput = document.getElementById('imgInput');
+  content.addEventListener('click', (e) => {
+    if(!editMode) return;
+    const wrap = e.target.closest('.thumb-wrap');
+    if(wrap){ pendingImg = wrap.querySelector('img.thumb'); imgInput.value=''; imgInput.click(); }
+  });
+  imgInput.addEventListener('change', () => {
+    const f = imgInput.files && imgInput.files[0];
+    if(!f || !pendingImg) return;
+    const reader = new FileReader();
+    reader.onload = () => { pendingImg.src = reader.result; saveNow(); toast('🖼 图片已更新'); };
+    reader.readAsDataURL(f);
   });
 
   // 新建一段经历（按当前语言生成）
@@ -700,11 +751,13 @@
       ? '<div class="when">2026 — Present</div>' +
         '<h3>New Role Title</h3>' +
         '<div class="org">Company Name</div>' +
-        '<ul><li>Click to describe your responsibility</li></ul>'
+        '<ul><li>Click to describe your responsibility</li></ul>' +
+        '<div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>'
       : '<div class="when">2026 — 至今</div>' +
         '<h3>新职位名称</h3>' +
         '<div class="org">公司名称</div>' +
-        '<ul><li>点击此处描述你的工作职责</li></ul>';
+        '<ul><li>点击此处描述你的工作职责</li></ul>' +
+        '<div class="thumb-wrap"><img class="thumb" src="assets/luna.jpg" alt="经历配图" loading="lazy" decoding="async"></div>';
     tl.appendChild(d);
     if(editMode){
       d.querySelectorAll('h3,.when,.org,li').forEach(el=>el.setAttribute('contenteditable','true'));
