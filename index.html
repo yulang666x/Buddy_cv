@@ -773,7 +773,9 @@
     const old = btn.textContent;
     btn.textContent = '同步中…'; btn.disabled = true;
     try{
-      const html = content.innerHTML;
+      const clone = content.cloneNode(true);
+      clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+      const html = clone.innerHTML;
       const r = await fetch('/api/save', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
